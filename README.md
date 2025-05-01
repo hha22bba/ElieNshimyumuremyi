@@ -1,5 +1,5 @@
 # ElieNshimyumuremyi
-## OOP Threee Projects
+## OOP Three Projects
 ## First Project: Mission Management System
 ### Main Class
 ---------
