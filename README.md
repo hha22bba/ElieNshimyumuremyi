@@ -653,3 +653,386 @@ public class ResidentialLand extends Land{
 }
 ```
 ### Third: Nursery Management System
+### MainMenu
+```java 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+public class MainMenu {
+
+        static Scanner scanner = new Scanner(System.in);
+        static Set<String> studentIds = new HashSet<>();
+
+        static BabyClass babyClass = new BabyClass("C001");
+        static MiddleClass middleClass = new MiddleClass("C002");
+        static TopClass topClass = new TopClass("C003");
+
+        static List<Teacher> teachers = new ArrayList<>();
+        static Map<String, NurseryClass> classMap = Map.of(
+                "Baby", babyClass,
+                "Middle", middleClass,
+                "Top", topClass
+        );
+
+        public static void main(String[] args) {
+            boolean running = true;
+            while (running) {
+                System.out.println("\n====== Nursery School Management ======");
+                System.out.println("1. Assign Teacher");
+                System.out.println("2. Enroll Student");
+                System.out.println("3. Conduct Activity");
+                System.out.println("4. Track Progress");
+                System.out.println("5. Generate & Save Class Report");
+                System.out.println("6. Exit");
+                System.out.print("Choose option: ");
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                switch (choice) {
+                    case 1 -> assignTeacher();
+                    case 2 -> enrollStudent();
+                    case 3 -> conductActivity();
+                    case 4 -> trackClassProgress();
+                    case 5 -> generateAndSaveReport();
+                    case 6 -> running = false;
+                    default -> System.out.println("Invalid option.");
+                }
+            }
+        }
+
+        static void assignTeacher() {
+            System.out.print("Enter Teacher ID: ");
+            String id = scanner.nextLine();
+            System.out.print("Enter Name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter Role: ");
+            String role = scanner.nextLine();
+
+            Teacher t = new Teacher(id, name, role);
+            teachers.add(t);
+
+            System.out.print("Assign to (Baby/Middle/Top): ");
+            String classChoice = scanner.nextLine();
+            NurseryClass cls = classMap.get(classChoice);
+
+            if (cls != null) {
+                if (cls.assignTeacher(t)) {
+                    System.out.println("Teacher assigned successfully.");
+                }
+            } else {
+                System.out.println("Invalid class.");
+            }
+        }
+
+        static void enrollStudent() {
+            System.out.print("Student ID: ");
+            String id = scanner.nextLine();
+            System.out.print("Name: ");
+            String name = scanner.nextLine();
+            System.out.print("Age: ");
+            int age = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Guardian Name: ");
+            String guardian = scanner.nextLine();
+
+            Student s = new Student(id, name, age, guardian);
+            System.out.print("Enroll in (Baby/Middle/Top): ");
+            String classChoice = scanner.nextLine();
+
+            NurseryClass cls = classMap.get(classChoice);
+            if (cls != null) {
+                if (cls.enrollStudent(s, studentIds)) {
+                    System.out.println("Student enrolled successfully.");
+                }
+            } else {
+                System.out.println("Invalid class.");
+            }
+        }
+
+        static void conductActivity() {
+            System.out.print("Which class (Baby/Middle/Top): ");
+            String classChoice = scanner.nextLine();
+            System.out.print("Activity name: ");
+            String activity = scanner.nextLine();
+
+            NurseryClass cls = classMap.get(classChoice);
+            if (cls != null) {
+                cls.conductActivity(activity);
+            } else {
+                System.out.println("Invalid class.");
+            }
+        }
+
+        static void trackClassProgress() {
+            System.out.print("Which class to track (Baby/Middle/Top): ");
+            String classChoice = scanner.nextLine();
+
+            NurseryClass cls = classMap.get(classChoice);
+            if (cls != null) {
+                cls.trackProgress();
+                System.out.println("Progress tracked.");
+            } else {
+                System.out.println("Invalid class.");
+            }
+        }
+
+        static void generateAndSaveReport() {
+            System.out.print("Generate report for (Baby/Middle/Top): ");
+            String classChoice = scanner.nextLine();
+
+            NurseryClass cls = classMap.get(classChoice);
+            if (cls != null) {
+                cls.generateClassReport();
+                saveReportToFile(cls);
+            } else {
+                System.out.println("Invalid class.");
+            }
+        }
+
+        static void saveReportToFile(NurseryClass cls) {
+            String fileName = cls.className.replace(" ", "_") + "_Report.txt";
+            try (FileWriter writer = new FileWriter(fileName)) {
+                writer.write("Class Report: " + cls.className + "\n");
+                writer.write("Teacher: " + (cls.assignedTeacher != null ? cls.assignedTeacher.teacherName : "None") + "\n");
+                writer.write("Students Enrolled: " + cls.students.size() + "\n");
+                writer.write("Activities: " + cls.activities + "\n");
+                writer.write("Progress: " + cls.progressNote + "\n");
+                System.out.println("Report saved to " + fileName);
+            } catch (IOException e) {
+                System.out.println("Failed to save report: " + e.getMessage());
+            }
+        }
+    }
+```
+### BabyClass Class
+```java 
+import java.util.*;
+public class BabyClass extends NurseryClass{
+        public BabyClass(String classId) {
+            super(classId, "Baby Class", 15);
+        }
+
+        @Override
+        public boolean enrollStudent(Student student, Set<String> existingStudentIds) {
+            if (student.age < 2 || student.age > 3) {
+                System.out.println("Age not suitable for Baby Class.");
+                return false;
+            }
+            if (students.size() >= maxCapacity) {
+                System.out.println("Baby Class is full.");
+                return false;
+            }
+            if (existingStudentIds.contains(student.studentId)) {
+                System.out.println("Duplicate student ID.");
+                return false;
+            }
+            student.registeredClass = this;
+            students.add(student);
+            existingStudentIds.add(student.studentId);
+            return true;
+        }
+
+        @Override
+        public boolean assignTeacher(Teacher teacher) {
+            if (!teacher.teacherRole.equals("Early Childhood Educator")) {
+                System.out.println("Teacher not qualified for Baby Class.");
+                return false;
+            }
+            this.assignedTeacher = teacher;
+            teacher.assignedClass = this;
+            return true;
+        }
+
+        @Override
+        public void trackProgress() {
+            progressNote = "Focused on motor skills and play-based learning.";
+        }
+
+        @Override
+        public void conductActivity(String activityName) {
+            activities.add(activityName);
+            System.out.println("Conducted: " + activityName);
+        }
+
+        @Override
+        public void generateClassReport() {
+            System.out.println("----- Baby Class Report -----");
+            System.out.println("Teacher: " + (assignedTeacher != null ? assignedTeacher.teacherName : "None"));
+            System.out.println("Students Enrolled: " + students.size());
+            System.out.println("Activities: " + activities);
+            System.out.println("Progress: " + progressNote);
+        }
+    }
+```
+### MiddleClass Class
+```java 
+import java.util.*;
+public class MiddleClass extends NurseryClass {
+         public MiddleClass(String classId) {
+            super(classId, "Middle Class", 20);
+        }
+
+        @Override
+        public boolean enrollStudent(Student student, Set<String> existingStudentIds) {
+            if (student.age < 3 || student.age > 4) {
+                System.out.println("Age not suitable for Middle Class.");
+                return false;
+            }
+            if (students.size() >= maxCapacity) {
+                System.out.println("Middle Class is full.");
+                return false;
+            }
+            if (existingStudentIds.contains(student.studentId)) {
+                System.out.println("Duplicate student ID.");
+                return false;
+            }
+            student.registeredClass = this;
+            students.add(student);
+            existingStudentIds.add(student.studentId);
+            return true;
+        }
+
+        @Override
+        public boolean assignTeacher(Teacher teacher) {
+            this.assignedTeacher = teacher;
+            teacher.assignedClass = this;
+            return true;
+        }
+
+        @Override
+        public void trackProgress() {
+            progressNote = "Language development and storytelling.";
+        }
+
+        @Override
+        public void conductActivity(String activityName) {
+            activities.add(activityName);
+            System.out.println("Conducted: " + activityName);
+        }
+
+        @Override
+        public void generateClassReport() {
+            System.out.println("----- Middle Class Report -----");
+            System.out.println("Teacher: " + (assignedTeacher != null ? assignedTeacher.teacherName : "None"));
+            System.out.println("Students Enrolled: " + students.size());
+            System.out.println("Activities: " + activities);
+            System.out.println("Progress: " + progressNote);
+        }
+}
+```
+### NurseryClass Class
+```java 
+import java.util.*;
+abstract class NurseryClass {
+
+        String classId;
+        String className;
+        int maxCapacity;
+        Teacher assignedTeacher;
+        List<Student> students = new ArrayList<>();
+        List<String> activities = new ArrayList<>();
+        String progressNote = "";
+
+        public NurseryClass(String classId, String className, int maxCapacity) {
+            this.classId = classId;
+            this.className = className;
+            this.maxCapacity = maxCapacity;
+        }
+
+        public abstract boolean enrollStudent(Student student, Set<String> existingStudentIds);
+        public abstract void trackProgress();
+        public abstract void conductActivity(String activityName);
+        public abstract void generateClassReport();
+        public abstract boolean assignTeacher(Teacher teacher);
+    }
+```
+### Student Class
+```java 
+class Student {
+        String studentId;
+        String studentName;
+        int age;
+        String guardianName;
+        NurseryClass registeredClass;
+
+        public Student(String studentId, String studentName, int age, String guardianName) {
+            this.studentId = studentId;
+            this.studentName = studentName;
+            this.age = age;
+            this.guardianName = guardianName;
+        }
+    }
+```
+### Teacher Class
+```java 
+
+class Teacher {
+        String teacherId;
+        String teacherName;
+        String teacherRole;
+        NurseryClass assignedClass;
+
+        public Teacher(String teacherId, String teacherName, String teacherRole) {
+            this.teacherId = teacherId;
+            this.teacherName = teacherName;
+            this.teacherRole = teacherRole;
+        }
+    }
+```
+### TopClass Class
+```java 
+import java.util.*;
+public class TopClass extends NurseryClass{
+
+        public TopClass(String classId) {
+            super(classId, "Top Class", 25);
+        }
+
+        @Override
+        public boolean enrollStudent(Student student, Set<String> existingStudentIds) {
+            if (student.age < 4 || student.age > 5) {
+                System.out.println("Age not suitable for Top Class.");
+                return false;
+            }
+            if (students.size() >= maxCapacity) {
+                System.out.println("Top Class is full.");
+                return false;
+            }
+            if (existingStudentIds.contains(student.studentId)) {
+                System.out.println("Duplicate student ID.");
+                return false;
+            }
+            student.registeredClass = this;
+            students.add(student);
+            existingStudentIds.add(student.studentId);
+            return true;
+        }
+
+        @Override
+        public boolean assignTeacher(Teacher teacher) {
+            this.assignedTeacher = teacher;
+            teacher.assignedClass = this;
+            return true;
+        }
+
+        @Override
+        public void trackProgress() {
+            progressNote = "Basic reading, writing, and arithmetic with term assessments.";
+        }
+
+        @Override
+        public void conductActivity(String activityName) {
+            activities.add(activityName);
+            System.out.println("Conducted: " + activityName);
+        }
+
+        @Override
+        public void generateClassReport() {
+            System.out.println("----- Top Class Report -----");
+            System.out.println("Teacher: " + (assignedTeacher != null ? assignedTeacher.teacherName : "None"));
+            System.out.println("Students Enrolled: " + students.size());
+            System.out.println("Activities: " + activities);
+            System.out.println("Progress: " + progressNote);
+        }
+    }
+```
