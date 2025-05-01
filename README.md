@@ -1,6 +1,6 @@
 # ElieNshimyumuremyi
 ## OOP Projects
-### First: Mission Management System
+### First Project: Mission Management System
 ### Main Class
 ```java 
 import java.util.*;
@@ -347,7 +347,7 @@ public class Resource {
     public String getResourceType() { return resourceType; }
 }
 ```
-### Second: Land Management System
+### Second Project: Land Management System
 ### Main Class
 ```java 
 import java.util.Date;
@@ -652,7 +652,7 @@ public class ResidentialLand extends Land{
     }
 }
 ```
-### Third: Nursery Management System
+### Third Project: Nursery Management System
 ### MainMenu
 ```java 
 import java.io.FileWriter;
