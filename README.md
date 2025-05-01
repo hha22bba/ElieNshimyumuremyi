@@ -105,6 +105,7 @@ public class CombatMission extends Mission{
 
 ```
 ### HumanitarianMission Class
+--------------------------
 ```java 
 import java.util.Date;
 import java.util.List;
@@ -161,6 +162,7 @@ public class HumanitarianMission extends Mission{
 
 ```
 ### Mission Class
+--------------
 ```java 
 import java.util.*;
 public abstract class Mission {
@@ -202,6 +204,7 @@ public abstract class Mission {
 
 ```
 ### Personnel Class
+----------------
 ```java 
 public class Personnel {
     private String personnelId;
@@ -226,6 +229,7 @@ public class Personnel {
 }
 ```
 ### ReconMission Class
+--------------------
 ```java 
 import java.util.*;
 public class ReconMission extends Mission{
@@ -277,6 +281,7 @@ public class ReconMission extends Mission{
 }
 ```
 ### RescueMission Class
+---------------------
 ```java
 import java.util.*;
 
@@ -327,6 +332,7 @@ public class RescueMission extends Mission{
 }
 ```
 ### Resource Class
+----------------
 ```java 
 public class Resource {
     private String resourceId;
@@ -349,8 +355,9 @@ public class Resource {
     public String getResourceType() { return resourceType; }
 }
 ```
-### Second Project: Land Management System
+## Second Project: Land Management System
 ### Main Class
+-----------
 ```java 
 import java.util.Date;
 import java.util.Scanner;
