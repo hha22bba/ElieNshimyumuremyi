@@ -55,6 +55,7 @@ public class Main {
 
 ```
 ### CombatMission Class
+---------------------
 ```java 
 import java.util.*;
 public class CombatMission extends Mission{
