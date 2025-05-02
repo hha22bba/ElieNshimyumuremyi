@@ -1,4 +1,4 @@
-# Unified Java Project
+# Unified Java Project (projects)
 
 This is a unified Java project that brings together three individual object-oriented systems:
 - **Mission Management System**
