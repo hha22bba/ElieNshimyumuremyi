@@ -46,29 +46,6 @@ unified-java-project/
 - Git & GitHub for version control
 - Docker for containerization
 
-## 🐳 Run with Docker
-
-Build the Docker image:
-```bash
-docker build -t unified-java-project .
-```
-
-Run the compiled Java project:
-```bash
-docker run unified-java-project
-```
-
-## 💻 Running Locally (Without Docker)
-Compile:
-```bash
-javac main/Main.java mission/*.java land/*.java nursery/*.java
-```
-
-Run:
-```bash
-java main.Main
-```
-
 ## 👤 Author
 
 **Elie Nshimyumuremyi**  
@@ -76,4 +53,3 @@ GitHub: [hha22bba](https://github.com/hha22bba)
 
 ---
 
-Feel free to contribute or suggest improvements to this project!
